@@ -1,0 +1,7 @@
+# ninja log v5
+5	341	6817605536105061	CMakeFiles/banking_record_system.dir/main.cpp.obj	18c48889822f7836
+0	454	6817605537285988	CMakeFiles/banking_record_system.dir/BankAccount.cpp.obj	e62381212c442065
+454	572	6817605538413075	banking_record_system.exe	ca4f4d3b0c1814bc
+10	464	6817633443450141	CMakeFiles/banking_record_system.dir/main.cpp.obj	9cfbd9ef11ca839a
+3	601	6817633444892814	CMakeFiles/banking_record_system.dir/BankAccount.cpp.obj	c145f085878ec622
+602	1039	6817633449157580	banking_record_system.exe	b740352f655ef43d

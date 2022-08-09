@@ -61,8 +61,20 @@ void BankAccount::deposit(){
     int user_deposit {};
     std::cout << "How much would you like to deposit? $";
     std::cin >> user_deposit;
-    Balance = Balance + user_deposit;
-    std::cout << "Successfully deposited $" << user_deposit << std::endl;
+    if (user_deposit < 0){
+        // Prevent depositing a negative number
+        std::cout << "Error: Negative number entered. Cannot deposit $" << user_deposit << std::endl;
+        std::cout << "Please try again." << std::endl;
+    }
+    else if (typeid(user_deposit).name() != typeid(1).name()){
+        // Prevent user from trying to enter a non-int
+        std::cout << "Error: Non-integer entered." << std::endl;
+        std::cout << "Please try again." << std::endl;
+    }
+    else{
+        Balance = Balance + user_deposit;
+        std::cout << "Successfully deposited $" << user_deposit << std::endl;
+    }
 }
 
 void BankAccount::auto_deposit(int user_deposit){
@@ -75,7 +87,18 @@ void BankAccount::withdraw(){
     std::cout << "How much would you like to withdraw? $";
     std::cin >> user_withdraw;
     if (Balance - user_withdraw < 0){
+        // Prevent withdrawing more than what is in the account
         std::cout << "Error: Insufficient Funds. Cannot withdraw $" << user_withdraw << std::endl;
+        std::cout << "Please try again." << std::endl;
+    }
+    else if (user_withdraw < 0){
+        // Prevent withdrawing a negative number
+        std::cout << "Error: Negative number entered. Cannot withdraw $" << user_withdraw << std::endl;
+        std::cout << "Please try again." << std::endl;
+    }
+    else if (typeid(user_withdraw).name() != typeid(1).name()){
+        // Prevent user from trying to enter a non-int
+        std::cout << "Error: Non-integer entered." << std::endl;
         std::cout << "Please try again." << std::endl;
     }
     else{
@@ -110,6 +133,11 @@ bool BankAccount::transfer_to_another_user(std::vector<BankAccount>& all_bank_ac
             // Check to see if user can transfer the requested amount to another user
             if (Balance - transfer_balance < 0){
                 std::cout << "Error: Insufficient Funds. Cannot transfer $" << transfer_balance << std::endl;
+                return transfer_status;
+            }
+            else if (typeid(transfer_balance).name() != typeid(1).name()){
+                // Prevent user from trying to enter a non-int
+                std::cout << "Error: Non-integer entered." << std::endl;
                 return transfer_status;
             }
             else{

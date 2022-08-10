@@ -4,8 +4,7 @@
 #include <limits>    // Used to handle invalid input std::cin
 #include "BankAccount.h"
 
-// TODO: Prevent users from depositing or withdrawing past two decimals
-// TODO: Prevent users from entering a float instead of int in main menu or user menu
+// TODO: Only allow depositing or withdrawing to two decimals
 
 /*
  * *************************************************************************************************************
@@ -30,6 +29,7 @@ void BankAccount::user_menu(std::vector<BankAccount>& all_bank_accounts){
         std::cin >> user_choice;
 
         // When input is an int, std::cin is 1, true; other types will return 0, false
+        // If a value with decimals is entered, then user_choice will automatically round down to int
         if (!std::cin){
             // Input is NOT an int
             std::cin.clear(); //clear bad input flag if user doesn't input an int
@@ -312,6 +312,7 @@ void main_menu(std::vector<BankAccount>& all_bank_accounts){
         std::cin >> user_choice;
 
         // When input is an int, std::cin is 1, true; other types will return 0, false
+        // If a value with decimals is entered, then user_choice will automatically round down to int
         if (!std::cin){
             // Input is NOT an int
             std::cin.clear(); //clear bad input flag if user doesn't input an int

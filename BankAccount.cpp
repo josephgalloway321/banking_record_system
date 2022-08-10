@@ -4,6 +4,9 @@
 #include <limits>    // Used to handle invalid input std::cin
 #include "BankAccount.h"
 
+// TODO: Prevent users from creating an account with a name already used
+// TODO: Prevent users from depositing or withdrawing past two decimals
+
 /*
  * *************************************************************************************************************
  * The methods below focus on what the users can do once they log in to their respective account
@@ -82,7 +85,6 @@ void BankAccount::user_menu(std::vector<BankAccount>& all_bank_accounts){
 void BankAccount::deposit(){
     double user_deposit {};
     std::cout << "How much would you like to deposit? $";
-    // TODO: Must press enter twice
     std::cin >> user_deposit;
 
     // When input is an int or double, std::cin is 1, true; other types will return 0, false
@@ -166,60 +168,54 @@ bool BankAccount::transfer_to_another_user(std::vector<BankAccount>& all_bank_ac
     std::cout << "What is the name on the account that you want to transfer to? ";
     getline(std::cin, transfer_to_name);
 
-    // When input is a string, std::cin is 1, true; other types will return 0, false
-    if (!std::cin){
-        // Input is NOT a string
-        std::cin.clear(); //clear bad input flag if user doesn't input an int
-        // Remove the bad input
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "Error: Invalid input. Please enter a string using characters." << std::endl;
-        // Will return to user menu
-    }
-    else{
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    // Not needed for string input
+    //std::cin.clear();
+    //std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-        // Verify name of account to transfer to
-        unsigned int vector_size = all_bank_accounts.size();    // Size of vector does not change, so just call the size once
-        for (unsigned int i = 0; i < vector_size; i++){    // Loop through vector of bank accounts to find requested name
-            if (all_bank_accounts[i].get_user_name() == transfer_to_name){
-                // The account exists, so continue transfer process
-                std:: cout << "How much would you like to transfer? $";
-                std::cin >> transfer_balance;
+    // Verify name of account to transfer to
+    unsigned int vector_size = all_bank_accounts.size();    // Size of vector does not change, so just call the size once
+    for (unsigned int i = 0; i < vector_size; i++){    // Loop through vector of bank accounts to find requested name
+        if (all_bank_accounts[i].get_user_name() == transfer_to_name){
+            // The account exists, so continue transfer process
+            std:: cout << "How much would you like to transfer? $";
+            std::cin >> transfer_balance;
 
-                // When input is an int or double, std::cin is 1, true; other types will return 0, false
-                if (!std::cin){
-                    // Input is NOT an int or a double
-                    std::cin.clear(); //clear bad input flag if user doesn't input an int
-                    // Remove the bad input
-                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                    std::cout << "Error: Invalid input. Please enter an integer or double." << std::endl;
-                    // Will return to user menu
+            // When input is an int or double, std::cin is 1, true; other types will return 0, false
+            if (!std::cin){
+                // Input is NOT an int or a double
+                std::cin.clear(); //clear bad input flag if user doesn't input an int
+                // Remove the bad input
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                std::cout << "Error: Invalid input. Please enter an integer or double." << std::endl;
+                return transfer_status;
+                // Will return to user menu (Failed)
+            }
+            else{
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+                // Check to see if user can transfer the requested amount to another user
+                if (Balance - transfer_balance < 0.0){
+                    std::cout << "Error: Insufficient Funds. Cannot transfer $" << transfer_balance << std::endl;
+                    return transfer_status;
+                    // Will return to user menu (Failed)
                 }
                 else{
-                    std::cin.clear();
-                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                    Balance = Balance - transfer_balance;    // Remove money from current user's account
+                    std::cout << "Successfully deposited $" << transfer_balance << std::endl;
 
-                    // Check to see if user can transfer the requested amount to another user
-                    if (Balance - transfer_balance < 0.0){
-                        std::cout << "Error: Insufficient Funds. Cannot transfer $" << transfer_balance << std::endl;
-                        return transfer_status;
-                    }
-                    else{
-                        Balance = Balance - transfer_balance;    // Remove money from current user's account
-                        std::cout << "Successfully deposited $" << transfer_balance << std::endl;
-
-                        // Deposit transfer balance to other user's account
-                        all_bank_accounts[i].auto_deposit(transfer_balance);
-                        transfer_status = true;
-                        return transfer_status;
-                    }
+                    // Deposit transfer balance to other user's account
+                    all_bank_accounts[i].auto_deposit(transfer_balance);
+                    transfer_status = true;
+                    return transfer_status;
+                    // Will return to user menu (Success)
                 }
             }
         }
     }
     std::cout << "The account for " << transfer_to_name << " does not exist." << std::endl;
     return transfer_status;
+    // Will return to user menu (Failed)
 }
 
 /*
@@ -233,53 +229,32 @@ void new_bank_account(std::vector<BankAccount>& all_bank_accounts){
     std::cout << "We are excited you want to create an account with us!\nPlease begin by entering your name: ";
     getline(std::cin, input_name);
 
-    // TODO: Remove check input here because anything entered will be considered a string
-    // When input is a string, std::cin is 1, true; other types will return 0, false
-    if (!std::cin){
-        // Input is NOT a string
-        std::cin.clear(); //clear bad input flag if user doesn't input an int
-        // Remove the bad input
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "Error: Invalid input. Please enter a string using characters." << std::endl;
-        // Will return to user menu
-    }
-    else{
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    // Not needed for string input
+    //std::cin.clear();
+    //std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-        BankAccount user(input_name);    // Create the bank account object for this user
-        all_bank_accounts.push_back(user);    // Store a copy of the object in the all_bank_accounts vector because the original will be erased at the end of this scope
-        std::cout << "Account created for " << input_name << std::endl;
-        std::cout << std::endl;
-    }
+    BankAccount user(input_name);    // Create the bank account object for this user
+    all_bank_accounts.push_back(user);    // Store a copy of the object in the all_bank_accounts vector because the original will be erased at the end of this scope
+    std::cout << "Account created for " << input_name << std::endl;
+    std::cout << std::endl;
 }
 
 void remove_bank_account(std::vector<BankAccount>& all_bank_accounts){
     std::string input_name;
 
-    std::cout << "What is the name on the account that you wish to remove?";
+    std::cout << "What is the name on the account that you wish to remove? ";
     getline(std::cin, input_name);
 
-    // When input is a string, std::cin is 1, true; other types will return 0, false
-    if (!std::cin){
-        // Input is NOT a string
-        std::cin.clear(); //clear bad input flag if user doesn't input an int
-        // Remove the bad input
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "Error: Invalid input. Please enter a string using characters." << std::endl;
-        // Will return to user menu
-    }
-    else{
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    // Not needed for string input
+    //std::cin.clear();
+    //std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-        unsigned int vector_size = all_bank_accounts.size();    // Size of vector does not change, so just call the size once
-        for (unsigned int i = 0; i < vector_size; i++){    // Loop through all accounts in all_bank_accounts vector
-            if (all_bank_accounts[i].get_user_name() == input_name){
-                all_bank_accounts.erase(all_bank_accounts.begin()+ i);    // Erase user's bank account in vector
-                std::cout << input_name << "'s Account Removed." << std::endl;
-                std::cout << std::endl;
-            }
+    unsigned int vector_size = all_bank_accounts.size();    // Size of vector does not change, so just call the size once
+    for (unsigned int i = 0; i < vector_size; i++){    // Loop through all accounts in all_bank_accounts vector
+        if (all_bank_accounts[i].get_user_name() == input_name){
+            all_bank_accounts.erase(all_bank_accounts.begin()+ i);    // Erase user's bank account in vector
+            std::cout << input_name << "'s Account Removed." << std::endl;
+            std::cout << std::endl;
         }
     }
 }
@@ -330,7 +305,7 @@ void main_menu(std::vector<BankAccount>& all_bank_accounts){
             // Will return to user menu
         }
         else{
-            std::cin.clear();
+            //std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
             if (user_choice == 1){
@@ -347,38 +322,28 @@ void main_menu(std::vector<BankAccount>& all_bank_accounts){
                     std::cout << "Please enter the name associated with your account: ";
                     getline(std::cin, user_input);
 
-                    // When input is a string, std::cin is 1, true; other types will return 0, false
-                    if (!std::cin){
-                        // Input is NOT a string
-                        std::cin.clear(); //clear bad input flag if user doesn't input an int
-                        // Remove the bad input
-                        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                        std::cout << "Error: Invalid input. Please enter a string using characters." << std::endl;
-                        // Will return to user menu
-                    }
-                    else{
-                        std::cin.clear();
-                        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                    // Not needed for string input
+                    //std::cin.clear();
+                    //std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-                        // Check if name is in the system
-                        is_login_valid = valid_login(all_bank_accounts, user_input);
-                        if (is_login_valid){
-                            // Move into user menu for this specific user
-                            std::cout << "Log in Successful." << std::endl;
+                    // Check if name is in the system
+                    is_login_valid = valid_login(all_bank_accounts, user_input);
+                    if (is_login_valid){
+                        // Move into user menu for this specific user
+                        std::cout << "Log in Successful." << std::endl;
 
-                            unsigned int vector_size = all_bank_accounts.size();    // Size of vector does not change, so just call the size once
-                            for (unsigned int i = 0; i < vector_size; i++){
-                                if (all_bank_accounts[i].get_user_name() == user_input){    // Find the account that matches the login
-                                    all_bank_accounts[i].user_menu(all_bank_accounts);    // Go to user menu
-                                    // Will return to main menu after exiting user menu
-                                }
+                        unsigned int vector_size = all_bank_accounts.size();    // Size of vector does not change, so just call the size once
+                        for (unsigned int i = 0; i < vector_size; i++){
+                            if (all_bank_accounts[i].get_user_name() == user_input){    // Find the account that matches the login
+                                all_bank_accounts[i].user_menu(all_bank_accounts);    // Go to user menu
+                                // Will return to main menu after exiting user menu
                             }
                         }
-                        else{
-                            std::cout << "Error: Invalid login. There is no account with that name." << std::endl;
-                            std::cout << std::endl;
-                            // Will return to main menu
-                        }
+                    }
+                    else{
+                        std::cout << "Error: Invalid login. There is no account with that name." << std::endl;
+                        std::cout << std::endl;
+                        // Will return to main menu
                     }
                 }
             }

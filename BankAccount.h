@@ -11,7 +11,7 @@ private:
     std::string Name;
     //std::string Username;
     //std::string Password;    // Future: Make log in process more secure with username and password
-    int Balance;
+    double Balance;
 
 public:
     /*
@@ -21,9 +21,9 @@ public:
  */
     void user_menu(std::vector<BankAccount>&);
     void deposit();
-    void auto_deposit(int user_deposit);    // Used by upload_accounts function and transfer_to_another_user method to bypass correspondence with user in deposit() method
+    void auto_deposit(double user_deposit);    // Used by upload_accounts function and transfer_to_another_user method to bypass correspondence with user in deposit() method
     void withdraw();
-    int get_user_balance() const;
+    double get_user_balance() const;
     std::string get_user_name() const;
     bool transfer_to_another_user(std::vector<BankAccount>&);
 

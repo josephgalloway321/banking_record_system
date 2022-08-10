@@ -4,8 +4,8 @@
 #include <limits>    // Used to handle invalid input std::cin
 #include "BankAccount.h"
 
-// TODO: Prevent users from creating an account with a name already used
 // TODO: Prevent users from depositing or withdrawing past two decimals
+// TODO: Prevent users from entering a float instead of int in main menu or user menu
 
 /*
  * *************************************************************************************************************
@@ -226,17 +226,33 @@ bool BankAccount::transfer_to_another_user(std::vector<BankAccount>& all_bank_ac
 void new_bank_account(std::vector<BankAccount>& all_bank_accounts){
     std::string input_name;
 
-    std::cout << "We are excited you want to create an account with us!\nPlease begin by entering your name: ";
-    getline(std::cin, input_name);
+    bool name_taken {false};    // Assume name is available
+    do{
+        name_taken = false;
+        std::cout << "We are excited you want to create an account with us!\nPlease begin by entering your name: ";
+        getline(std::cin, input_name);
 
-    // Not needed for string input
-    //std::cin.clear();
-    //std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-    BankAccount user(input_name);    // Create the bank account object for this user
-    all_bank_accounts.push_back(user);    // Store a copy of the object in the all_bank_accounts vector because the original will be erased at the end of this scope
-    std::cout << "Account created for " << input_name << std::endl;
-    std::cout << std::endl;
+        // Go through each name in all_bank_accounts vector to see if the input_name is already taken
+        unsigned int vector_size = all_bank_accounts.size();    // Size of vector does not change, so just call the size once
+        for (unsigned int i = 0; i < vector_size; i++){
+            if (all_bank_accounts[i].get_user_name() == input_name){
+                // Name is already taken
+                name_taken = true;
+                std::cout << input_name << " is already used. Please enter a different name." << std::endl;
+                std::cout << std::endl;
+            }
+        }
+        if (!name_taken){
+            // Name entered is available
+            name_taken = false;
+            std::cout << input_name << " is available." << std::endl;
+            BankAccount user(input_name);    // Create the bank account object for this user
+            all_bank_accounts.push_back(user);    // Store a copy of the object in the all_bank_accounts vector because the original will be erased at the end of this scope
+            std::cout << "Account created for " << input_name << std::endl;
+            std::cout << std::endl;
+        }
+    }
+    while(name_taken);
 }
 
 void remove_bank_account(std::vector<BankAccount>& all_bank_accounts){

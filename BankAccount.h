@@ -26,6 +26,7 @@ public:
     double get_user_balance() const;
     std::string get_user_name() const;
     bool transfer_to_another_user(std::vector<BankAccount>&);
+    double input_precision_check(double user_input);        // Make sure user_input is to only two decimals
 
     // Constructor
     BankAccount(std::string name){

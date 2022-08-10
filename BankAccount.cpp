@@ -4,7 +4,6 @@
 #include <limits>    // Used to handle invalid input std::cin
 #include "BankAccount.h"
 
-// TODO: Only allow depositing or withdrawing to two decimals
 
 /*
  * *************************************************************************************************************
@@ -106,6 +105,7 @@ void BankAccount::deposit(){
             std::cout << "Please try again." << std::endl;
         }
         else{
+            user_deposit = input_precision_check(user_deposit);
             Balance = Balance + user_deposit;
             std::cout << "Successfully deposited $" << user_deposit << std::endl;
         }
@@ -146,6 +146,7 @@ void BankAccount::withdraw(){
             std::cout << "Please try again." << std::endl;
         }
         else{
+            user_withdraw = input_precision_check(user_withdraw);
             Balance = Balance - user_withdraw;
             std::cout << "Withdrawal of $" << user_withdraw << " successful." << std::endl;
         }
@@ -167,10 +168,6 @@ bool BankAccount::transfer_to_another_user(std::vector<BankAccount>& all_bank_ac
 
     std::cout << "What is the name on the account that you want to transfer to? ";
     getline(std::cin, transfer_to_name);
-
-    // Not needed for string input
-    //std::cin.clear();
-    //std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     // Verify name of account to transfer to
     unsigned int vector_size = all_bank_accounts.size();    // Size of vector does not change, so just call the size once
@@ -201,6 +198,7 @@ bool BankAccount::transfer_to_another_user(std::vector<BankAccount>& all_bank_ac
                     // Will return to user menu (Failed)
                 }
                 else{
+                    transfer_balance = input_precision_check(transfer_balance);
                     Balance = Balance - transfer_balance;    // Remove money from current user's account
                     std::cout << "Successfully deposited $" << transfer_balance << std::endl;
 
@@ -216,6 +214,17 @@ bool BankAccount::transfer_to_another_user(std::vector<BankAccount>& all_bank_ac
     std::cout << "The account for " << transfer_to_name << " does not exist." << std::endl;
     return transfer_status;
     // Will return to user menu (Failed)
+}
+
+double BankAccount::input_precision_check(double user_input){
+    // Make sure user_input is to only two decimals
+    int original_whole {(int)user_input};    // Only the whole number of the original value
+    double original_decimals {};    // Only the decimals of the original value
+
+    original_decimals = ((double)((int)((original_whole - (double)original_decimals)*100)))/100;
+
+    user_input = original_whole + original_decimals;    // Add both parts to get original to only two decimals
+    return user_input;
 }
 
 /*

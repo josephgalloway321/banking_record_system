@@ -2,7 +2,7 @@
 
 #include <fstream>    // Used to read/write to a txt file
 #include <limits>    // Used to handle invalid input std::cin
-#include <math.h>    // Round used in input_precision_check
+#include <cmath>    // Round used in input_precision_check
 #include "BankAccount.h"
 
 

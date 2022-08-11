@@ -2,7 +2,7 @@
 
 **Author:** Joseph D. Galloway II </br>
 **Description:**
-This program is a terminal-based interface for Happy Bank. It's a fictional bank that allows users to create, delete, and login to their account. After logging in, users can deposit their money, withdraw their money, check their current balance, and transfer money to another user's account. All the account data is read from and saved to a txt file at the start and end of the program. </br>
+This program is a terminal-based interface for Happy Bank. It's a fictional bank that allows users to create, delete, and login to their account. After logging in, users can deposit or withdraw their money, check their current balance, and transfer money to another user's account. All the account data is read from and saved to a text file at the start and end of the program. </br>
 
 **Path to Executable:** banking_record_system/cmake-build-debug/banking_record_system.exe </br>
 

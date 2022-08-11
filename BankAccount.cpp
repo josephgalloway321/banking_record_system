@@ -2,6 +2,7 @@
 
 #include <fstream>    // Used to read/write to a txt file
 #include <limits>    // Used to handle invalid input std::cin
+#include <math.h>    // Round used in input_precision_check
 #include "BankAccount.h"
 
 
@@ -217,11 +218,19 @@ bool BankAccount::transfer_to_another_user(std::vector<BankAccount>& all_bank_ac
 }
 
 double BankAccount::input_precision_check(double user_input){
-    // Make sure user_input is to only two decimals
+    // Make sure user_input is to only two decimals (Equivalent to rounding down to two decimals)
     int original_whole {(int)user_input};    // Only the whole number of the original value
     double original_decimals {};    // Only the decimals of the original value
 
-    original_decimals = ((double)((int)((original_whole - (double)original_decimals)*100)))/100;
+    /*
+    user_input - (double)original_whole;    // Remove the whole number from user input to get only decimals
+    (user_input - (double)original_whole)*100;    // Multiply by 100 to isolate two decimal values
+    round((user_input - (double)original_whole)*100);    // Round if user inputs more than two decimals
+    (int)((user_input - (double)original_whole)*100);    // Convert to int to get only the two decimal values
+    (double)((int)((user_input - (double)original_whole)*100));    // Convert to double to prepare for division
+    ((double)((int)((user_input - (double)original_whole)*100)))/100;    // Divide by 100 to convert back to two decimal values
+    */
+    original_decimals = ((double)((int)round(((user_input - (double)original_whole)*100))))/100;
 
     user_input = original_whole + original_decimals;    // Add both parts to get original to only two decimals
     return user_input;
@@ -266,13 +275,10 @@ void new_bank_account(std::vector<BankAccount>& all_bank_accounts){
 
 void remove_bank_account(std::vector<BankAccount>& all_bank_accounts){
     std::string input_name;
+    bool account_exists = false;
 
     std::cout << "What is the name on the account that you wish to remove? ";
     getline(std::cin, input_name);
-
-    // Not needed for string input
-    //std::cin.clear();
-    //std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     unsigned int vector_size = all_bank_accounts.size();    // Size of vector does not change, so just call the size once
     for (unsigned int i = 0; i < vector_size; i++){    // Loop through all accounts in all_bank_accounts vector
@@ -280,7 +286,11 @@ void remove_bank_account(std::vector<BankAccount>& all_bank_accounts){
             all_bank_accounts.erase(all_bank_accounts.begin()+ i);    // Erase user's bank account in vector
             std::cout << input_name << "'s Account Removed." << std::endl;
             std::cout << std::endl;
+            account_exists = true;
         }
+    }
+    if (!account_exists){
+        std::cout << "Error: This account does not exist. Please try again." << std::endl;
     }
 }
 
